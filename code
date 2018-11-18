@@ -1,0 +1,130 @@
+import math as m
+import turtle as t
+import random as r
+name=[]
+startlist=[]
+endlist=[]
+limlist=[]
+t.bgcolor('antiquewhite1')
+t.pensize(5)
+def drawmem():
+    t.speed(0)
+    t.penup()
+    t.goto(-300,0)
+    t.write("This is your memory \n Please type the command \n in the run program", move=False, align="left", font=("Times", 15, "bold italic"))
+    t.goto(-50,250)
+    t.pendown()
+    
+    
+    t.forward(150)
+    t.right(90)
+    t.forward(500)
+    t.right(90)
+    t.fd(150)
+    t.right(90)
+    t.fd(500)
+    
+    t.penup()
+    t.goto(-100,250)
+    t.pendown()
+    t.write(memsize, move=False, align="left", font=("Helvetica", 10, "normal"))
+    t.penup()
+    t.goto(-100,-250)
+    t.pendown()
+    t.write("0", move=False, align="left", font=("Helvetica", 10, "normal"))
+    t.hideturtle
+
+def draw(seg,lim,base):
+            draw=base/memsize*500
+            draw2=lim/memsize*500
+            end=lim+base
+            t.penup()
+            t.fd(draw)
+            t.write(base, move=False, align="left", font=("Helvetica", 10, "normal"))
+            t.right(90)
+            t.fd(50)
+            t.pendown()
+            
+            t.fillcolor((r.random(),r.random(),r.random()))
+            t.begin_fill()
+            
+            t.fd(150)
+            t.left(90)
+            t.fd((draw2/2-10))
+            t.left(90)
+            
+            t.pu()
+            t.fd(75)
+            t.write("Segment %s"%seg, move=False, align="center", font=("Helvetica", 15, "normal"))
+            t.bk(75)
+            t.right(90)
+            t.fd(draw2/2+10)
+            t.left(90)
+            t.pd()
+            t.fd(150)
+            t.end_fill()
+            t.penup()
+            t.fd(50)
+            
+            t.write(end, move=False, align="left", font=("Helvetica", 10, "normal"))
+            t.bk(50)
+            t.pd()
+            t.lt(90)
+            t.fd(draw2)
+            t.right(90)
+            t.pu()
+            
+            t.goto(-100,-250)
+            t.right(90)
+            t.hideturtle
+
+print("Segmentation and Calculate Physical Address of Segmentation")
+memsize= int(input("Physical Memory Size (bytes) : "))
+print("We are drawing your physical memory. Please wait...")
+
+drawmem()
+while(True):
+    print("Mode: \n Add-1 \n Translate from logical to physical-2 ")
+    mode=input("What do you want to do? :  ")
+    if(mode=="1"):
+        seg=int(input("Add Segment no. (e.g. 1) : "))
+        lim=int(input("Add Limit (e.g. 300) : "))
+        base=int(input("Add Base (e.g. 200) : "))
+        if(lim<=0 or  lim>=memsize):
+            print("Invalid Limit")
+        if(base<0 or base>=memsize):
+            print("Invalid Base")
+        if(base+lim>memsize):
+            print("ERROR BASE+LIMIT HAS TO LOWER THAN MEMORY SIZE")
+        else:
+            if(seg in name):
+                print("This number was already used.")
+            else:
+                draws=True
+                for i in range(len(name)):
+                    if((base>=startlist[i] and base<endlist[i]) or (base+lim>startlist[i] and base+lim<endlist[i])):
+                        print("New segment is overlap with other segment.")
+                        draws=False
+                if(draws):
+                    name.append(seg)
+                    startlist.append(base)
+                    endlist.append(base+lim)
+                    limlist.append(lim)
+                    draw(seg,lim,base)
+            
+    elif(mode=="2"):
+         seg2=int(input("Of which segment? : "))
+         log=int(input("Logical address you would like to translate : "))
+         target=name.index(seg2)
+         basetar=startlist[target]
+         limtar=limlist[target]
+         if(log>limtar):
+              print("INVALID Logical Address.")
+         else:
+              phys=basetar+log
+              print("So, Logical Address < ",seg2,",",log," > is mapped to physical address ",phys)
+        
+        
+    else:
+        print("Wrong Mode")
+    print("---------------------------------------------")
